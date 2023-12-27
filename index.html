@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arithmetic Expression Evaluation with Time-based Variables</title>
+</head>
+
+    <style>
+                body {
+            font-family: "Courier New", monospace;
+            background-color: #000000;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        label {
+            font-size: 18px;
+        }
+
+        input[type="text"] {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #00ff00;
+            background-color: #000000;
+            color: #00ff00;
+            margin-right: 10px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: 0 0 5px #00ff00;
+        }
+
+        button {
+            padding: 5px 10px;
+            font-size: 16px;
+            background-color: #000000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #00ff00;
+            color: #000000;
+        }
+
+        #evaluatedExpression {
+            font-size: 20px;
+            margin: 20px 0;
+            color: #00ff00;
+            font-weight: bold;
+            word-wrap: break-word;
+        }
+
+        #evaluatedExpression.error {
+            color: #ff0000;
+        }
+
+        /* Additional styles for text inside parentheses, brackets, and curly braces */
+        #expression::placeholder {
+            color: #00ff00;
+            opacity: 0.7;
+        }
+
+        #expression[type="text"]::selection {
+            background-color: #00ff00;
+            color: #000000;
+        }
+
+        #expression[type="text"]::placeholder {
+            color: #00ff00;
+            opacity: 0.7;
+        }
+
+        #expression[type="text"][data-type="brackets"]::placeholder {
+            color: #0000ff;
+        }
+
+        #expression[type="text"][data-type="curly-braces"]::placeholder {
+            color: #008800;
+        }
+
+        #expression[type="text"][data-type="error"] {
+            border: 1px solid #ff0000;
+            color: #ff0000;
+        }
+
+
+            </style>
+  
+
+
+
+ <body>
+    <div id="manual-container" style="height: 300px; overflow: hidden; position: relative;">
+        <div id="manual-content">
+            <!-- Your user manual content goes here -->
+            <!-- <p>1. Understanding the Purpose: </p>
+<p>The provided code is designed to evaluate arithmetic expressions containing time-based variables. These variables correspond to different digits of the current time. The goal is to replace placeholders like (p), (q), (r), and (s) with their respective time-based values and calculate the expression's result.</p>
+
+<p>2. Input Expression:</p>
+<p>Locate the "Enter Expression" label and the input field below it. This is where you can type your arithmetic expression containing placeholders like (p), (q), (r), and (s) along with standard arithmetic operators (+, -, *, %), brackets [ ], and curly braces { }. The expression will be evaluated based on the current time.</p>
+
+<p>3. Evaluating Expression:</p>
+<p>Once you've entered your expression, click the "Evaluate Expression" button. This triggers the evaluation process. The code will replace the placeholders with the corresponding time-based values and calculate the result of the expression. The evaluated result will be displayed below the "Evaluated Expression" label.</p>
+
+<p>4. Real-time Updates:</p>
+The evaluated expression is updated every second. As the current time changes, the time-based variables (p, q, r, s) also change. The code automatically refreshes the evaluated expression to reflect the new values and provides real-time feedback.</p>
+
+<p>5. Additional Features:</p>
+
+<p>The "Current Time" section displays the current time and updates every second.</p>
+<p>The code includes error handling. If there's an issue with the expression, such as division inside brackets, or if the expression contains unsupported operations, an error message will be displayed.</p>
+<p>The code is designed to handle both lowercase and uppercase letters within curly braces { }. Lowercase letters are represented by numbers 1 to 26, and uppercase letters are represented by numbers 27 to 52.</p>  -->
+            
+            <!-- ... more content ... -->
+
+
+
+    <p>Current Time:</p>
+    <p id="currentTime"></p>
+    <label for="expression">Enter Expression:</label>
+    <input type="text" id="expression" placeholder="Enter your expression">
+    <!-- <button onclick="evaluateExpression()">Evaluate Expression</button> -->
+    <p>Evaluated Expression:</p>
+    <p id="evaluatedExpression"></p>
+
+    <script>
+
+        function calculateTimeBasedVariables() {
+            var now = new Date();
+            var hh = now.getHours();
+            var mm = now.getMinutes();
+
+            var p = Math.floor(hh / 10);
+            var q = hh % 10;
+            var r = Math.floor(mm / 10);
+            var s = mm % 10;
+
+            return { p, q, r, s };
+        }
+
+        // function evaluateExpression() {
+        //     clearEvaluatedExpression(); // Clear the output element first
+        //     var input = document.getElementById("expression").value;
+        //     var timeBasedVariables = calculateTimeBasedVariables();
+        //     try {
+        //         var result = evaluate(input, timeBasedVariables);
+        //         document.getElementById("evaluatedExpression").textContent = result;
+        //     } catch (error) {
+        //         document.getElementById("evaluatedExpression").textContent = "Error: " + error.message;
+        //     }
+        // }
+
+
+                function evaluateExpression() {
+            clearEvaluatedExpression(); // Clear the output element first
+            var input = document.getElementById("expression").value;
+            var timeBasedVariables = calculateTimeBasedVariables();
+                
+            // Replace (p), (q), (r), and (s) with their corresponding values before evaluating
+            input = input.replace(/\((p|q|r|s)\)/g, (match, variable) => timeBasedVariables[variable]);
+                
+            try {
+                var result = evaluate(input, timeBasedVariables);
+                document.getElementById("evaluatedExpression").textContent = result;
+            } catch (error) {
+                document.getElementById("evaluatedExpression").textContent = "Error: " + error.message;
+            }
+        }
+
+
+        function clearEvaluatedExpression() {
+            document.getElementById("evaluatedExpression").textContent = "";
+        }
+
+        function evaluate(input, timeBasedVariables) {
+            var output = "";
+            var i = 0;
+
+            while (i < input.length) {
+                if (input[i] === '(' && ['p', 'q', 'r', 's'].includes(input[i + 1]) && input[i + 2] === ')') {
+                    var placeholder = input[i + 1];
+                    output += timeBasedVariables[placeholder];
+                    i += 3; // Skip the parentheses and the placeholder
+                } else if (input[i] === '[') {
+                    var start = i + 1;
+                    var end = input.indexOf(']', start);
+                    if (end === -1) {
+                        throw new Error("Unclosed bracket");
+                    }
+                    var subExpression = input.substring(start, end);
+                    
+                    // Check for division operation inside [ ] and throw an error
+                    if (subExpression.includes('/')) {
+                        throw new Error("Division not allowed inside brackets");
+                    }
+                    
+                    var evaluatedSubExpression = eval(subExpression);
+                    output += evaluatedSubExpression.toString();
+                    i = end + 1;
+                } else if (input[i] === '{') {
+                    var start = i + 1;
+                    var end = input.indexOf('}', start);
+                    if (end === -1) {
+                        throw new Error("Unclosed curly brace");
+                    }
+                    var subExpression = input.substring(start, end);
+                    var evaluatedSubExpression = eval(subExpression); // Evaluate the arithmetic expression
+                    var number = parseInt(evaluatedSubExpression);
+                    if (number >= 1 && number <= 26) {
+                        output += String.fromCharCode(number + 96); // Convert to lowercase letters
+                    } else if (number >= 27 && number <= 52) {
+                        output += String.fromCharCode(number + 38); // Convert to uppercase letters
+                    } else {
+                        output += 'A'; // Convert to 'A' for other values
+                    }
+                    i = end + 1;
+                } else {
+                    output += input[i];
+                    i++;
+                }
+            }
+
+            return output;
+        }
+
+        function evaluateTimeExpression(expression, timeBasedVariables) {
+    var operators = ['+', '-', '*', '%'];
+    
+    for (var operator of operators) {
+        if (expression.includes(operator)) {
+            var parts = expression.split(operator);
+            var evaluatedParts = parts.map(part => {
+                if (['p', 'q', 'r', 's'].includes(part)) {
+                    return timeBasedVariables[part];
+                } else {
+                    return eval(part);
+                }
+            });
+            return eval(evaluatedParts.join(operator));
+        }
+    }
+
+    throw new Error("No supported operator found in expression");
+}
+
+
+        // Function to update evaluated expression every minute
+        function updateEvaluatedExpression() {
+            evaluateExpression();
+        }
+
+        // Update the evaluated expression every minute
+        setInterval(updateEvaluatedExpression, 1000); // 60000 milliseconds = 1 minute
+
+        // Display current time initially and update every second
+        function displayTime() {
+            var now = new Date();
+            var currentTime = now.toLocaleTimeString();
+            document.getElementById("currentTime").textContent = currentTime;
+        }
+
+        setInterval(displayTime, 1000);
+        displayTime(); // Display current time on page load
+
+
+
+        // Display current time initially and update every second
+        function displayTime() {
+            var now = new Date();
+            var currentTime = now.toLocaleTimeString();
+            document.getElementById("currentTime").textContent = currentTime;
+        }
+
+        setInterval(displayTime, 1000);
+        displayTime(); // Display current time on page load
+
+
+    
+
+
+    </script>
+</body>
+</html>
+
+
